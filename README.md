@@ -3,7 +3,7 @@ Repository for data mining (INF 493) first work
 
 ## To install (with virtualenv)
 
-### Instaling virtualenv
+### Installing virtualenv
 ```sh
 cd data-mining-w1
 pip install virtualenv
@@ -17,7 +17,7 @@ source venv/bin/activate
 ```bat
 venv\scripts\activate
 ```
-### Before virtualenv activate
+### After activating virtualenv
 ```sh
 pip install -r requirements.txt
 ```
