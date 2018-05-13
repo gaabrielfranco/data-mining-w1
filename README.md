@@ -26,3 +26,9 @@ pip install -r requirements.txt
 ```sh
 jupyter notebook w1.ipynb
 ```
+
+### TODO
+
+* Aplicar os 4 algoritmos com o k variando de 26 a 35
+* Análise da silhueta para cada k
+* Passos d), e), f) e g)
