@@ -1,5 +1,6 @@
 # Dataset
 yelp_dataset_challenge_academic_dataset/
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
