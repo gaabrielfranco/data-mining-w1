@@ -17,18 +17,13 @@ def main():
     data = pd.read_csv("data/data_pt1.csv")
     data.info(verbose=False, memory_usage=False)
 
-    # Normalizando os dados
-    for column in data:
-        data[column] = (data[column] - data[column].min()) / \
-            (data[column].max() - data[column].min())
-
     # Subconjunto dos dados que vou utilizar
-    #data_analysis = data[["latitude", "longitude"]]
     data_analysis = data.drop(["latitude", "longitude"], axis=1)
 
+    
     # PCA
     centralized_data = data_analysis - data_analysis.mean()
-    pca = PCA(n_components=len(data_analysis.columns))
+    pca = PCA(n_components=len(centralized_data.columns))
     data_pca = pca.fit_transform(centralized_data)
 
     df_pca = pd.DataFrame(data_pca)
@@ -37,24 +32,27 @@ def main():
     for i, j in enumerate(variance):
         variance[i] = sum(variance[i - 1:i + 1]) if i > 0 else variance[i]
 
-    # 30 dim => 0.82 variancia
-
+    # 22dim => 0.75 variance
     df_pca = df_pca.drop(
-        [column for column in range(30, len(df_pca.columns))], axis=1)
+        [column for column in range(22, len(df_pca.columns))], axis=1)
 
     data_analysis = df_pca
-    # data_analysis.insert(len(data_analysis.column),
-    #                     latitude, data["longitude"])
-    # data_analysis.insert(len(data_analysis.column),
-    #                     longitude, data["longitude"])
+    
+    data_analysis.insert(len(data_analysis.columns),
+                         "latitude", data["latitude"])
+    data_analysis.insert(len(data_analysis.columns),
+                         "longitude", data["longitude"])
 
-    # print(data_analysis.head())
-    # return
+    # Normalizando os dados
+    #for column in data_analysis:
+    #    data_analysis[column] = (data_analysis[column] - data_analysis[column].min()) / \
+    #        (data_analysis[column].max() - data_analysis[column].min())
+    
     # Achar k com inércia
     '''
     inertia = []
     for k in range(2, 100):
-        km = KMeans(n_clusters=k)
+        km = KMeans(n_clusters=k, n_jobs=-1)
         labels = km.fit_predict(data_analysis)
         inertia.append(km.inertia_)
     plt.plot(range(2, 100), inertia)
@@ -63,11 +61,7 @@ def main():
     return
     '''
     # Achar k com silhueta
-    range_n_clusters = range(10, 30)
-
-    # Valores de latitude e longitude em numpy
-    longitude = data["longitude"].as_matrix()
-    latitude = data["latitude"].as_matrix()
+    range_n_clusters = range(10, 25)
 
     for n_clusters in range_n_clusters:
         fig, (ax1, ax2) = plt.subplots(1, 2)
@@ -88,7 +82,7 @@ def main():
 
         y_lower = 10
 
-        color = (sns.color_palette("husl", n_clusters))
+        color = (sns.color_palette(palette=None, n_colors=n_clusters))
         for i in range(n_clusters):
             ith_cluster_silhouette_values = \
                 sample_silhouette_values[cluster_labels == i]
@@ -116,16 +110,8 @@ def main():
         ax1.set_xticks([-0.1, 0, 0.2, 0.4, 0.6, 0.8, 1])
 
         colors = [color[i] for i in cluster_labels]
-        ax2.scatter(latitude, longitude, marker='.', s=30, lw=0, alpha=0.7,
+        ax2.scatter(data_analysis["latitude"].as_matrix(), data_analysis["longitude"].as_matrix(), marker='o', s=30, lw=0, alpha=0.7,
                     c=colors, edgecolor='k')
-
-        centers = clusterer.cluster_centers_
-        ax2.scatter(centers[:, 0], centers[:, 1], marker='o',
-                    c="white", alpha=1, s=200, edgecolor='k')
-
-        for i, c in enumerate(centers):
-            ax2.scatter(c[0], c[1], marker='$%d$' % i, alpha=1,
-                        s=50, edgecolor='k')
 
         ax2.set_title("The visualization of the clustered data.")
         ax2.set_xlabel("Feature space for the 1st feature")
