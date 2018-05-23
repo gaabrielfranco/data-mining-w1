@@ -49,8 +49,8 @@ def main():
             (data_analysis[column].max() - data_analysis[column].min())
 
     # Roubando...
-    #data_analysis["latitude"] *= 3
-    #data_analysis["longitude"] *= 3
+    data_analysis["latitude"] *= 3
+    data_analysis["longitude"] *= 3
 
     # Achar k com inércia
     '''
