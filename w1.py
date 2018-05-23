@@ -18,10 +18,10 @@ def main():
     #data.info(verbose=False, memory_usage=False)
 
     # Subconjunto dos dados que vou utilizar
-    #data_analysis = data.drop(["latitude", "longitude"], axis=1)
-    data_analysis = data[["latitude", "longitude"]]
+    data_analysis = data.drop(["latitude", "longitude"], axis=1)
+    #data_analysis = data[["latitude", "longitude"]]
+
     # PCA
-    '''
     centralized_data = data_analysis - data_analysis.mean()
     pca = PCA(n_components=len(centralized_data.columns))
     data_pca = pca.fit_transform(centralized_data)
@@ -42,11 +42,15 @@ def main():
                          "latitude", data["latitude"])
     data_analysis.insert(len(data_analysis.columns),
                          "longitude", data["longitude"])
-    '''
+
     # Normalizando os dados
     for column in data_analysis:
         data_analysis[column] = (data_analysis[column] - data_analysis[column].min()) / \
             (data_analysis[column].max() - data_analysis[column].min())
+
+    # Roubando...
+    #data_analysis["latitude"] *= 3
+    #data_analysis["longitude"] *= 3
 
     # Achar k com inércia
     '''
@@ -61,8 +65,8 @@ def main():
     # valores de k só para latitude e longitude => 7-11
 
     # Achar k com silhueta
-    '''
-    range_n_clusters = range(7, 11)
+
+    range_n_clusters = range(13, 16)
 
     for n_clusters in range_n_clusters:
         fig, (ax1, ax2) = plt.subplots(1, 2)
@@ -83,7 +87,11 @@ def main():
 
         y_lower = 10
 
-        color = (sns.color_palette(palette=None, n_colors=n_clusters))
+        colors_vec = ["#e6194b", "#3cb44b", "#ffe119", "#0082c8",
+                      "#f58231", "#911eb4", "#46f0f0", "#f032e6", "#fabebe", "#008080",
+                      "#e6beff", "#800000", "#000080", "#000000", "#d2f53c"]
+
+        color = sns.color_palette(colors_vec)
         for i in range(n_clusters):
             ith_cluster_silhouette_values = \
                 sample_silhouette_values[cluster_labels == i]
@@ -123,8 +131,8 @@ def main():
                      fontsize=14, fontweight='bold')
 
         plt.show()
-    '''
 
+    '''
     # 9 ou 10 grupos pela silhueta considerando apenas posição
 
     # Teste para 9 grupos
@@ -150,7 +158,7 @@ def main():
             variance[i] = sum(variance[i - 1:i + 1]) if i > 0 else variance[i]
 
         # 24dim => 0.75 variance
-        # 48dim =? 0.9 variance
+        # 48dim => 0.9 variance
         df_pca = df_pca.drop(
             [column for column in range(24, len(df_pca.columns))], axis=1)
         df_pca.insert(len(df_pca.columns),
@@ -163,19 +171,7 @@ def main():
             df_pca[column] = (df_pca[column] - df_pca[column].min()) / \
                 (df_pca[column].max() - df_pca[column].min())
 
-        # Achar k com inércia
-        '''
-        inertia = []
-        for k in range(2, 100):
-            km = KMeans(n_clusters=k, n_jobs=-1)
-            labels = km.fit_predict(df_pca)
-            inertia.append(km.inertia_)
-        plt.plot(range(2, 100), inertia)
-        plt.show()
-        return
-        '''
-
-        # Achar k com silhuet
+        # Achar k com silhueta
         range_n_clusters = range(2, 5)
 
         for n_clusters in range_n_clusters:
@@ -237,6 +233,7 @@ def main():
                          fontsize=14, fontweight='bold')
 
             plt.show()
+    '''
 
 
 if __name__ == "__main__":
