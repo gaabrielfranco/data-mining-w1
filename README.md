@@ -1,5 +1,5 @@
 # data-mining-w1
-Repository for data mining (INF 493) first work
+Finding culinary districts in Las Vegas using Yelp reviews
 
 ## To install
 ```sh
